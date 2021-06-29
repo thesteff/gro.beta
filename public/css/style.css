@@ -1084,6 +1084,12 @@ body.wait, body.wait *{
 	vertical-align: middle;
 }
 
+
+#bootstrap-overrides td {
+	vertical-align: middle;
+}
+
+
 /* icones bootstrap dans les tableaux */
 #bootstrap-overrides td .bi-check {
 	font-size: 20px;

@@ -136,28 +136,30 @@ class Cron extends BaseController {
 
 
 			// log message pour l'ADMINISTRATEUR
-			$recapMessage = "\n\nListe des membres ayant un ou plusieurs messages et/ou invitations en attente à qui un mail a été envoyé\n";
-			$recapMessage .= "=====================================================================\n\n";
-			foreach ($memberEmailed as $member) {
-				$messageVal = isset($member->nbMessage) && $member->nbMessage > 0 ? $member->nbMessage." messages non lus" : "";
-				$notifVal = isset($member->nbNotif) && $member->nbNotif > 0 ? $member->nbNotif." notifications non lues" : "";
-				$recapMessage .= $member->pseudo."  (".$member->email.") \t\t\t".$messageVal."\t\t".$notifVal."\n";
+			if (count($memberEmailed) > 0) {
+				$recapMessage = "\n\nListe des membres ayant un ou plusieurs messages et/ou invitations en attente à qui un mail a été envoyé\n";
+				$recapMessage .= "========================================================================\n\n";
+				foreach ($memberEmailed as $member) {
+					$messageVal = isset($member->nbMessage) && $member->nbMessage > 0 ? $member->nbMessage." messages non lus" : "";
+					$notifVal = isset($member->nbNotif) && $member->nbNotif > 0 ? $member->nbNotif." notifications non lues" : "";
+					$recapMessage .= $member->pseudo."  (".$member->email.") \t\t\t".$messageVal."\t\t".$notifVal."\n";
+				}
+				
+				// On envoie un email de récap à l'administrateur
+				$email = \Config\Services::email();
+				$email->setFrom("manage@le-gro.com", "Serveur GRO");
+				$email->setReplyTo("manage@le-gro.com", "Serveur GRO");
+				$email->setTo("s.plotto@free.fr");
+				
+				$subject = "";
+				if ($freqTag == 1) $subject = "everyDay";
+				else if ($freqTag == 2) $subject = "everyWeek";
+				else if ($freqTag == 3) $subject = "everyMonth";
+				
+				$email->setSubject("CRON :: ".$subject);
+				$email->setMessage(nl2br($recapMessage));
+				$state = $email->send();
 			}
-			
-			// On envoie un email de récap à l'administrateur
-			$email = \Config\Services::email();
-			$email->setFrom("manage@le-gro.com", "Serveur GRO");
-			$email->setReplyTo("manage@le-gro.com", "Serveur GRO");
-			$email->setTo("s.plotto@free.fr");
-			
-			$subject = "";
-			if ($freqTag == 1) $subject = "everyDay";
-			else if ($freqTag == 2) $subject = "everyWeek";
-			else if ($freqTag == 3) $subject = "everyMonth";
-			
-			$email->setSubject("CRON :: ".$subject);
-			$email->setMessage(nl2br($recapMessage));
-			$state = $email->send();
 
 		}
 

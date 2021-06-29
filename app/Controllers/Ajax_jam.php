@@ -178,7 +178,9 @@ class Ajax_jam extends BaseController {
 			$oldDestPath = FCPATH."/ressources/event/".dir_path($old_date.'_'.$slug);
 			$newDestPath = FCPATH."/ressources/event/".dir_path($date_iso.'_'.$new_slug);
 			if (is_dir($oldDestPath)) $rename_state = rename($oldDestPath, $newDestPath);
-			else $rename_state = false;
+			
+			// Si le répertoire n'était pas existant, on le créé
+			else $rename_state = mkdir($newDestPath, 0755); 	//$rename_state = false;
 		}
 		
 		
@@ -216,7 +218,7 @@ class Ajax_jam extends BaseController {
 			
 		$msg = "";
 		if (!$update_state) $msg = "La mise à jour de la base de donnée ne s'est pas effectuée convenablement.";
-		if (!$rename_state) $msg .= "\nIl y eu un problème lors du renommage du dossier de la jam.";
+		if (!$rename_state) $msg .= "\nIl y eu un problème lors de la création ou du renommage du dossier de la jam.";
 
 		$state = ($update_state && $rename_state);
 		if ($state) $msg = $new_slug;

@@ -1,3 +1,6 @@
+<!-- Pour detecter le mode de Bootstrap (xs sm md lg) !-->
+<!--<script src="<?php echo base_url();?>/ressources/script/bootstrap-toolkit.js" /></script>!-->
+
 <!-- autoresize texarea !-->
 <script type="text/javascript" src="<?php echo base_url();?>/ressources/script/autosize.js"></script>
 
@@ -157,6 +160,14 @@
 			$('#destInput').flexdatalist("value", "");
 		});
 		
+		
+		
+		// Mobile responsive
+		// On est en XS
+		if ($("#mobile-only-visible").css("display") == "block") {
+			$("#main-col").css("display","none");
+			//$("#main-col").addClass("hidden");
+		}
 		
 		
 		// On charge les discussions
@@ -350,7 +361,7 @@
 										$("#discussion-list #disc"+discItem.discussionId+" #discAvatar").append(hiddenAvatar);
 									}
 									// On actualise la mainDestBar si besoin
-									if (discItem.discussionId == $("#discussion-list .list-group-item.active").attr("id").substr(4)) updateMainDestAvatar();
+									if ( ($("#discussion-list .list-group-item.active").length > 0) && discItem.discussionId == $("#discussion-list .list-group-item.active").attr("id").substr(4)) updateMainDestAvatar();
 								},
 								error: function() {
 									$("#discussion-list #"+discItem.discussionId+" #discAvatar img#"+this.target).prop("src",'<?php echo base_url("images/icons/avatar1.png") ?>');
@@ -368,11 +379,11 @@
 						var dest = [{"id":"<?php echo $dest_item->id ?>","pseudo":"<?php echo $dest_item->pseudo ?>"}];
 						selectDiscussion(dest);
 					<?php else: ?>
-						// On select la discussion avec le post le plus récent
-						if ($obj['data'].length > 0) {
+					
+						// On select la discussion avec le post le plus récent ET si on n'est pas sur mobile
+						if ($obj['data'].length > 0 && $("#mobile-only-visible").css("display") != "block") {
 							$("#discussion-list .list-group-item:not(.hidden)").first().click();
 						}
-					
 					<?php endif; ?>
 						
 				}
@@ -788,6 +799,14 @@
 					
 					// On cale la scrollbar en bas
 					$("#main-panel").scrollTop($("#main-panel").prop("scrollHeight"));
+					
+					// =====  Si on est en XS  ===========
+					if ($("#mobile-only-visible").css("display") == "block") {
+						/*$("#left-col").addClass("hidden");
+						$("#main-col").removeClass("hidden");*/
+						$("#left-col").css("display","none");
+						$("#main-col").css("display","block");
+					}
 				}
 			}
 		);

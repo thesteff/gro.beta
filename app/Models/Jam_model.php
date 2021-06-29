@@ -563,9 +563,9 @@ class Jam_model extends Model {
 	// Efface une inscription (délier jam/membre/morceaux). On retourne le choicePos de celui à supprimer
 	public function delete_inscription($data) {
 
-		// On récupère l'id correspondant à la ref (jamId+membresId)
+		// On récupère l'id correspondant à la data (jamId+membresId)
 		$builder = $this->db->table('jam_membres_relation');
-		$query = $builder->getWhere([ 'jamId' => $ref['jamId'],	'membresId' => $ref['membresId'] ]);
+		$query = $builder->getWhere([ 'jamId' => $data['jamId'],	'membresId' => $data['membresId'] ]);
 		
 		if (!empty($query->getRow())) {
 			$row = $query->getRow();
@@ -583,7 +583,7 @@ class Jam_model extends Model {
 			$builder->where([ 'jam_membresId' => $row->id,
 									'choicePos >' => $toDelete->getRow()->choicePos
 									]);
-			$builder->update('inscriptions');
+			$builder->update();
 			
 			// On efface l'enregistrement
 			$builder->delete([ 'jam_membresId' => $row->id,

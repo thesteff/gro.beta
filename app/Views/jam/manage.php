@@ -762,7 +762,8 @@
 					<tfoot>
 						<tr>
 							<th><input id="select_all_member_list" type="checkbox" onclick="select_all('member_list')" /></th>
-							<th>Admin</th>
+							<th>Rôle</th>
+							<th><i class="bi bi-person-square bi_nopadding"></i></th>
 							<th>Pseudo</th>
 							<th>Prénom</th>
 							<th>Nom</th>

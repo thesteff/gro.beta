@@ -247,7 +247,7 @@
 				// On actualise l'affichage de l'inscription avec le choicePos et le pseudo
 				if ($obj['state'] == 1) {
 					$pos = get_postePos(elemId);
-					$span = $obj['data']+"."+$("#memberLogin").html();
+					$span = $obj['data']+"."+$("#memberLogin").attr("value");
 					$('#inscrTab tr[versionId="'+versionId+'"] td:nth-child('+$pos+') .choiceLabel').append($span).hide().fadeIn(500);					
 				}
 				
@@ -301,7 +301,7 @@
 							// On l'actualise si besoin
 							if (parseInt($CP) > $obj['data']) {
 								$newPos = $CP-1;
-								$newSpan = $newPos+'.'+$("#memberLogin").html();
+								$newSpan = $newPos+'.'+$("#memberLogin").attr("value");
 								$(this).empty().append($newSpan);
 							}
 						}

@@ -276,7 +276,7 @@ class Members extends BaseController {
 		
 		// On reste sur la même page mais la session sera destroy
 		$uri = new \CodeIgniter\HTTP\URI(previous_url());
-		header('Location: '.site_url($uri->getPath()));
+		header('Location: '.base_url($uri->getPath()));
 		exit;
 	}
 	
