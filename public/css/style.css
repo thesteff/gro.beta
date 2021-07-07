@@ -1115,6 +1115,12 @@ body.wait, body.wait *{
 	font-size: 16px;
 }
 
+#bootstrap-overrides td.btnCell {
+	padding: 0px !important;
+}
+#bootstrap-overrides td.btnCell .btn {
+	padding: 10px 5px !important;
+}
 
 
 /*** custom css only popup ***/

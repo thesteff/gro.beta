@@ -739,16 +739,6 @@ class Jam extends BaseController {
 					// On regarde si superAdmin
 					$data['isSuperAdmin'] = ($this->session->superAdmin);
 					
-					// On récupère la liste des membres en ordre alpha
-					$data['list_membres'] = $members_model->get_members('null','asc');
-					// On récupère l'instrument principal de chaque participant
-					foreach ($data['list_membres'] as $key => $elem) {
-						$members_model->get_mainInstru($data['list_membres'][$key]);
-					}	
-					
-					// On récupère les invitations
-					//$data['invitations'] = "coucou";
-					
 					// On lance la vue
 					echo view('jam/invitations', $data);
 					

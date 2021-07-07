@@ -234,6 +234,7 @@ class Ajax extends BaseController {
 			$list_invit[$i]['receiverPseudo'] = $receiver->pseudo;
 			$list_invit[$i]['receiverNom'] = $receiver->nom;
 			$list_invit[$i]['receiverPrenom'] = $receiver->prenom;
+			$list_invit[$i]['receiverHasAvatar'] = $receiver->hasAvatar;
 			$members_model->get_mainInstru($receiver);
 			$list_invit[$i]["receiverMainInstruName"] = $receiver->mainInstruName;
 		}
@@ -283,6 +284,7 @@ class Ajax extends BaseController {
 		$data['receiverPseudo'] = $receiver->pseudo;
 		$data['receiverNom'] = $receiver->nom;
 		$data['receiverPrenom'] = $receiver->prenom;
+		$data['receiverHasAvatar'] = $receiver->hasAvatar;
 		$members_model->get_mainInstru($receiver);
 		$data["receiverMainInstruName"] = $receiver->mainInstruName;
 
