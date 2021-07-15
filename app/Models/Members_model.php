@@ -5,6 +5,7 @@ use CodeIgniter\Model;
 use App\Models\Jam_model;
 use App\Models\Instruments_model;
 use App\Models\Formation_model;
+use App\Models\Session_model;
 use CodeIgniter\I18n\Time;
 
 class Members_model extends Model {
@@ -175,12 +176,16 @@ class Members_model extends Model {
 	}
 	
 	
-	
+	// Actualise le date_access du membre mais aussi la table de session
 	public function update_date_access($id) {
+		
+		log_message("debug","********** Members_model :: update_date_access");
+		
+		// On actualise le membre
 		$date_iso = date('c');
 		$builder = $this->db->table('membres');	
 		$builder->where('id',$id);
-		$builder->update([ 'date_access' => $date_iso ]);
+		$builder->update([ 'date_access' => $date_iso ]);		
 	}
 	
 	

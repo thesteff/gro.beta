@@ -74,6 +74,7 @@ Events::on('post_controller_constructor', function() {
 			// On rétablit la session
 			if ($member != false) {
 				
+				// On récupère les évènements accessibles
 				$arrayEvent = $members_model->get_jams($member->id);
 				
 				// On récupère les notifications
@@ -113,14 +114,13 @@ Events::on('post_controller_constructor', function() {
 				$members_model->update_cookie($member->id, $rdmStr);
 			
 				//log_message('debug', "REDIRECT TO HOME");
-			
 				redirect()->to('home');
 			}
 		}
 	}
 	
-	else {
+	//else {
 		//log_message('debug', "  ******* SESSION USERDATA ******");
-	}
+	//}
 });
 

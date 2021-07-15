@@ -66,16 +66,7 @@
 			
 			
 			<!-- *********   NOTIFICATION   ********** !-->
-			<?php if ($session->list_notif != null && sizeof($session->list_notif) > 0) : ?>
-			
-				nbNotif = <?php echo sizeof($session->list_notif) ?>;
-				if (nbNotif > 0) {
-					// On actualise le nbCount en fonction de la variable de session
-					$(".navbar-right #notif").css("padding-right","2px");
-					$(".navbar-right #notif .badge").html(nbNotif).removeClass("hidden");
-				}
-			
-			<?php endif; ?>
+			get_notifications();
 
 
 			$("#notifDD.dropdown").on("show.bs.dropdown", function(event) {
@@ -117,7 +108,7 @@
 		document.body.style.cursor = 'wait';
 		
 		// On vide la liste de notif existante
-		$("#notifDDMenu li:not(#invitNotifModele):not(.dropdown-header)").remove();
+		$("#notifDDMenu li:not(#invitNotifModele):not(.dropdown-header):not(#noNotifMsg)").remove();
 		
 		// Requète ajax au serveur
 		$.post("<?php echo site_url('ajax_members/get_notifications'); ?>",
@@ -137,6 +128,19 @@
 				// Modal
 				if ($obj['state'] == 1) {
 					
+					// On actualise l'affichage du nombre de notif
+					nbNotif = $obj['data'].length;
+					if (nbNotif > 0) {
+						// On actualise le nbCount en fonction de la variable de session
+						$(".navbar-right #notif").css("padding-right","2px");
+						$(".navbar-right #notif .badge").html(nbNotif).removeClass("hidden");
+					}
+					// Pas de notif
+					else {
+						$(".navbar-right #notif .badge").html(nbNotif).addClass("hidden");
+					}
+					
+					// On rempli le menu de notif
 					$.each($obj['data'], function (index, value) {
 						// On clone le modèle d'invit
 						$tempInvit = $("#notifDD li#invitNotifModele").clone().attr("id",value["id"]);
@@ -509,6 +513,14 @@
 												<button id="accept" type="button" class="btn btn-highlight">Confirmer</button>
 												<button id="reject" type="button" class="btn">Supprimer</button>
 											</div>
+										</div>
+									</a>
+								</li>
+								<!-- Pas de notif !-->
+								<li id="noNotifMsg" class="">
+									<a>
+										<div>
+											Aucune notification
 										</div>
 									</a>
 								</li>

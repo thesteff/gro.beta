@@ -182,7 +182,7 @@ class Members extends BaseController {
 			}
 		}
 		
-		
+		// On log l'utilisateur (variables de sessions...)
 		if ($is_member) {
 			
 			// On récupère le pseudo en case_sensitive directement à partir de la base

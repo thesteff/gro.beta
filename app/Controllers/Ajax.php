@@ -311,7 +311,7 @@ class Ajax extends BaseController {
 	
 	public function update_invitation_state() {
 	
-		log_message('debug', "************ ajax :: update_invitation");
+		log_message('debug', "************ ajax :: update_invitation_state");
 	
 		// On récupère les infos de l'invitation
 		$invitId = trim($_POST['invitId']);
@@ -341,6 +341,7 @@ class Ajax extends BaseController {
 		}
 		
 		// ****** On actualise la session
+		log_message("debug","session_list_noti : ".json_encode($this->session->get("list_notif")));
 		// On récupère les notif
 		$temp_list_notif = $this->session->get("list_notif");
 		// On cherche la notif pour laquelle le membre a répondu
@@ -351,7 +352,7 @@ class Ajax extends BaseController {
 		unset($temp_list_notif[$key]);
 		$this->session->set("list_notif",$temp_list_notif);
 		
-		//log_message("debug","session_list_noti : ".json_encode($this->session->get("list_notif")));
+		log_message("debug","session_list_noti : ".json_encode($this->session->get("list_notif")));
 
 		$return_data = array(
 			'state' => true,

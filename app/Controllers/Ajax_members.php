@@ -370,6 +370,9 @@ class Ajax_members extends BaseController {
 		
 		$data = $members_model->get_notifications($memberId);
 		
+		// On actualise la session
+		$this->session->set(['list_notif' => $data]);
+		
 		$return_data = array(
 			'state' => true,
 			'data' => $data
