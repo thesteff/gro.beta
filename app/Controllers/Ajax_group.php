@@ -13,8 +13,8 @@ class Ajax_group extends BaseController {
 	}
 
 	
-	// Ajouter un instrument à un membre
-	public function delete_news() {
+
+	/*public function delete_news() {
 		
 		$newsId = trim($_POST['newsId']);
 		
@@ -27,7 +27,7 @@ class Ajax_group extends BaseController {
 		);
 		$output = json_encode($return_data);
 		echo $output;
-	}
+	}*/
 	
 	
 	

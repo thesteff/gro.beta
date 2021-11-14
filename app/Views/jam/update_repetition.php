@@ -44,7 +44,7 @@
 		
 		
 		// On initialise le autoresize
-		$('.autosize').autosize({append: "\n"});
+		autosize($('.autosize'));
 		
 		
 		// Affiche les détails en cas de repopulate

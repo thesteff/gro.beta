@@ -56,6 +56,11 @@ $routes->add('jam/manage/(:any)', 'Jam::manage/$1');
 $routes->add('jam/update/(:any)', 'Jam::update/$1');
 $routes->add('jam/create', 'Jam::create');
 
+// STAGE
+//$routes->add('stage/inscription/(:any)', 'Stage::inscription/$1');
+$routes->add('stage/inscription/(:any)', 'Stage::inscription/$1');
+
+
 // JAM
 $routes->add('jam/invitations/(:any)', 'Jam::invitations/$1');
 $routes->add('jam/view_repetition/(:any)', 'Jam::view_repetition/$1');

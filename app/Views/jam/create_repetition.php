@@ -46,7 +46,7 @@ $(function() {
 	
 	
 	// On initialise le autoresize
-	$('.autosize').autosize({append: "\n"});
+	autosize($('.autosize'));
 	
 	
 	// En cas de repopulate
@@ -98,7 +98,6 @@ $(function() {
 			},
 	
 			function (msg) {
-				console.log("msg : "+msg);
 			
 				// Le lieu spécifié n'est pas présent dans la base
 				if (msg == "lieu_not_found") {

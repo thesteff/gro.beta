@@ -870,6 +870,7 @@
 						<thead>
 							 <tr>
 								<th data-priority="critical" class="centerTD" style="width:15px">&nbsp;</th>
+								<th data-priority="critical" class="centerTD" style="width:40px"><i class="bi bi-person-square bi_nopadding"></i></th>
 								<th data-priority="critical">Pseudo</th>
 								<th data-priority="6">Prénom</th>
 								<th data-priority="5">Nom</th>
@@ -886,6 +887,7 @@
 						<tfoot>
 							<tr>
 								<th><input id="select_all_stage_list" type="checkbox" onclick="select_all('stage_list')" /></th>
+								<th><i class="bi bi-person-square bi_nopadding"></i></th>
 								<th>Pseudo</th>
 								<th>Prénom</th>
 								<th>Nom</th>
@@ -906,6 +908,12 @@
 									echo '<tr tmemberId="'.$tmember->id.'">';
 									
 										echo '<td class="selector"><span style="display:none">0</span><input type="checkbox" /></td>';
+										
+										// Avatar
+										$imgSrc = $tmember->hasAvatar > 0 ? base_url("images/avatar/".$tmember->memberId.".png") : base_url("images/icons/avatar2.png");
+										echo '<td><img class="img-circle" src="'.$imgSrc.'" width="26" height="26"></td>';
+										
+										
 										echo '<td><a href="#" class="toggle"><b>'.$tmember->pseudo.'</b></a></td>';
 										echo '<td><b>'.$tmember->prenom.'</b></td>';
 										echo '<td>'.$tmember->nom.'</td>';
@@ -921,7 +929,7 @@
 										
 										// Pupitre principal
 										echo '<td>';
-											if (isset($tmember->mainPupitre) && strlen($tmember->mainPupitre['iconURL']) > 0)
+											if (isset($tmember->mainPupitre) && ( isset($tmember->mainPupitre['iconURL']) && strlen($tmember->mainPupitre['iconURL']) > 0 )  )
 												echo '<img style="height:16px; vertical-align: text-top; margin: 0px 5px 2px 5px" src="'.base_url().'/images/icons/'.$tmember->mainPupitre['iconURL'].'" title="'.$tmember->mainPupitre['pupitreLabel'].'"><span class="hidden">'.$tmember->mainPupitre['id'].'</span>';
 											else echo '-';
 										echo '</td>';
@@ -947,18 +955,18 @@
 									echo '<tr class="tablesorter-childRow">';
 										echo '<td></td>';
 										echo '<td colspan="3">|| <b>'.$tmember->prenom.' '.$tmember->nom.'</b><br>';
-										echo '|| Professeur : '.$tmember->prof.'<br>';
-										echo '|| Ecole : '.$tmember->ecole.'<br>';
+											echo '|| Professeur : '.$tmember->prof.'<br>';
+											echo '|| Ecole : '.$tmember->ecole.'<br>';
 										echo '</td>';
 										echo '<td colspan="2">|| <b>Tuteur</b><br>';
-										echo '|| Tel : '.substr($tmember->tel_tuteur,0,2).' '.substr($tmember->tel_tuteur,2,2).' '.substr($tmember->tel_tuteur,4,2).' '.substr($tmember->tel_tuteur,6,2).' '.substr($tmember->tel_tuteur,8,2).'<br>';								
-										echo '|| Email : <span class="email_used">'.$tmember->email_tuteur.'</span><br>';
+											echo '|| Tel : '.substr($tmember->tel_tuteur,0,2).' '.substr($tmember->tel_tuteur,2,2).' '.substr($tmember->tel_tuteur,4,2).' '.substr($tmember->tel_tuteur,6,2).' '.substr($tmember->tel_tuteur,8,2).'<br>';
+											echo '|| Email : <span class="email_used">'.$tmember->email_tuteur.'</span><br>';
 										echo '</td>';
 										echo '<td colspan="2">|| <b>Pratique</b><br>';
-										echo '|| Années : '.$tmember->nb_prat.'<br>';								
-										echo '|| En groupe : '.$tmember->nb_grp.'<br>';
+											echo '|| Années : '.$tmember->nb_prat.'<br>';								
+											echo '|| En groupe : '.$tmember->nb_grp.'<br>';
 										echo '</td>';
-										echo '<td colspan="4">|| <b>Remarque</b><br>';
+										echo '<td colspan="5">|| <b>Remarque</b><br>';
 											echo $tmember->remarque.'<br>';
 										echo '</td>';
 									echo "</tr>\n";

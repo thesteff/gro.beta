@@ -260,22 +260,26 @@
 					// On rempli la liste
 					$.each($obj['data'], function( key, value ) {
 						
-						// On créé le message
-						var msgBlock = jQuery("<div class='messageBlock'></div>");
-						var msg = jQuery("<div class='message' id="+value.id+"><b>"+value.pseudo+"</b>&nbsp;&nbsp;<span class='content'>"+getCleanText(value.text)+"</span></div>");
-						msgBlock.append(msg);
+						// On laisse de côté les messages supprimés
+						if (value.deleted_at != value.updated_at) {
 						
-						<?php if ($logged) : ?>
-							// Si l'auteur du message est le membre connecté
-							if (value.memberId == <?php echo $memberId ?>) {
-								// On récupère le menu d'options eton l'ajoute au block
-								option = get_options(value.id, msg);								
-								msgBlock.append(option);
-							}
-						<?php endif ?>
-						
-						// On ajoute le msgBlock à la liste
-						$("#messageList").append(msgBlock);
+							// On créé le message
+							var msgBlock = jQuery("<div class='messageBlock'></div>");
+							var msg = jQuery("<div class='message' id="+value.id+"><b>"+value.pseudo+"</b>&nbsp;&nbsp;<span class='content'>"+getCleanText(value.text)+"</span></div>");
+							msgBlock.append(msg);
+							
+							<?php if ($logged) : ?>
+								// Si l'auteur du message est le membre connecté
+								if (value.memberId == <?php echo $memberId ?>) {
+									// On récupère le menu d'options eton l'ajoute au block
+									option = get_options(value.id, msg);								
+									msgBlock.append(option);
+								}
+							<?php endif ?>
+							
+							// On ajoute le msgBlock à la liste
+							$("#messageList").append(msgBlock);
+						}
 					});
 				}
 			}

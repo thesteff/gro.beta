@@ -81,14 +81,14 @@
 	
 	
 	/* Transférer les vieux idInstru à la liste d'instrument dynamique */
-	function go() {
+	/*function go() {
 		console.log("GO!");
 		
 		// On change le curseur
 		document.body.style.cursor = 'progress';
 		
 
-		$.post("<?php echo site_url(); ?>/ajax_instruments/transfert_member_instrument",
+		$.post("<?php echo site_url(); ?>/ajax_members/set_slug",
 		
 			{},
 	
@@ -105,7 +105,7 @@
 				else console.log("error");
 			}
 		);
-	}
+	}*/
 	
 	
  </script>
@@ -160,7 +160,7 @@
 			<option value="40">40</option>
 		</select>
 		
-		<!-- Transferer les nouveaux instruments !-->
+		<!-- Lancer une fonction !-->
 		<!--<button type="button" class="btn btn-default" onclick="javascript:go()"><span class="glyphicon glyphicon-warning"></span>GO !</button> !-->
 
 		

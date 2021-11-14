@@ -21,6 +21,27 @@ class Cron extends BaseController {
 			// retourne fpm-fcgi avec firefox sur ovh
 		}
 	}
+	
+	
+	
+	public function everyDay() {
+		log_message("info","********** CRON :: everyDay() ");
+		$this->sendNotif(1);
+		
+	}
+	
+	public function everyWeek() {
+		log_message("info","********** CRON :: everyWeek() ");
+		$this->sendNotif(2);
+		
+	}
+	
+	public function everyMonth() {
+		log_message("info","********** CRON :: everyMonth() ");
+		$this->sendNotif(3);
+	}
+
+
 
 
 	// Envoie un mail de notif selon la fréquence sélectionnée dans le profil // 0 : jamais, 1 : tous les jour, 2 toutes les semaines, 3 : tous les mois
@@ -168,25 +189,6 @@ class Cron extends BaseController {
 		}
 		
 	}
-	
-	
-	public function everyDay() {
-		log_message("info","********** CRON :: everyDay() ");
-		$this->sendNotif(1);
-		
-	}
-	
-	public function everyWeek() {
-		log_message("info","********** CRON :: everyDay() ");
-		$this->sendNotif(2);
-		
-	}
-	
-	public function everyMonth() {
-		log_message("info","********** CRON :: everyDay() ");
-		$this->sendNotif(3);
-	}
-	
 	
 	
 	

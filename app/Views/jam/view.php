@@ -22,6 +22,7 @@
 	
 	
 	$(function() {
+
 		
 		// On masque les éléments inacessibles si besoin
 		refresh_jam();
@@ -268,8 +269,8 @@
 	/**************************************/
 	function popup_Stage_preinscription()  {
 
-		// Pas de popup si la jam est archivée
-		<?php if (!$jam_item['is_archived']) :?>
+		// Pas de popup si la jam est archivée ou si l'utilisateur n'a pas indiqué d'instrument dans son profil
+		<?php if (!$jam_item['is_archived'] || (isset($member) && $member->mainInstruId != "" )) :?>
 	
 			$("#modal_msg .modal-header").empty();
 			$("#modal_msg .modal-body").empty();
@@ -434,20 +435,26 @@
 			$("#member_list #list_pupitre li[label="+$("#mainPupitreLabel").html()+"] .pupitre_content span[idMember=<?php if (isset($member)) echo $member->id; else echo "-1" ?>]").remove();
 		}
 		
-		
+		// ******** Inscription STAGE
 		<?php if (isset($stage_item)) : ?>
-		// Si la jam a un stage et est archivée, on disabled le bouton d'inscription
+			// Si la jam a un stage et est archivée, on disabled le bouton d'inscription
 			<?php if ($jam_item['is_archived']) :?>
 				$("#stagePreinscrBtn").addClass("disabled");
-			<?php else: ?>
+			// Si l'utilisateur est logué mais n'a pas d'instrument
+			<?php elseif (isset($member) && $member->mainInstruId == "") :?>
+				$("#stagePreinscrBtn").addClass("disabled");
+				$("#stagePreinscrBtn").attr("rel", "tooltip");
+				$("#stagePreinscrBtn").attr("data-title", "Pour accéder au formulaire d'inscription au stage, merci de renseigner un instrument dans votre profil.");
+			<?php elseif ($attend_stage) : ?>
 				// Si la jam a un stage, on gère l'état du bouton du formulaire d'inscription à la jam
 				if ($("#attend_stage").html() == 1) {
-					// On n'a pas encore reçu le chèque donc on désactive juste le bouton de préinscription stagePreinscrBtn
-					if ($("#cheque_stage").html() == 0) {
-						$("#stagePreinscrBtn").addClass("disabled");
-						$("#stagePreinscrBtn").attr("rel", "tooltip");
-						$("#stagePreinscrBtn").attr("data-title", "Un formulaire de pré-inscription a déjà été envoyé !");
-					}
+					// On participe au stage donc on ne peut plus renvoyer de formulaire d'inscription
+					$("#stagePreinscrBtn").addClass("disabled");
+					$("#stagePreinscrBtn").attr("rel", "tooltip");
+					// On n'a pas encore reçu le chèque donc on désactive le bouton de préinscription stagePreinscrBtn
+					if ($("#cheque_stage").html() == 0) $("#stagePreinscrBtn").attr("data-title", "Vous avez déjà envoyé un formulaire de pré-inscription !");
+					else $("#stagePreinscrBtn").attr("data-title", "Vous participez déjà au stage.");
+					
 				}
 			<?php endif; ?>
 		<?php endif; ?>
@@ -2036,8 +2043,6 @@
 			<div id="jamLieuPanel" class="panel panel-default no-border" style="display:flex;">
 				<!-- Picto !-->
 				<div style="align-self:center">
-					<!-- <img style="height: 18px; margin:0px 16px;" src="<?php echo base_url("/images/icons/lieu.png") ?>" alt="lieu"> -->
-					<!-- <i class="bi bi-geo-alt" style="height: 18px; margin:0px 12px;"></i> -->
 					<i class="bi bi-geo-alt-fill" style="height: 18px; margin:0px 12px;"></i>
 				</div>
 				<!-- Block !-->
@@ -2057,7 +2062,9 @@
 			<?php if (isset($stage_item)) : ?>
 			<div id="stageLieuPanel" class="panel panel-default no-border hidden" style="display:flex;">
 				<!-- Picto !-->
-				<div style="align-self:center"><img style="height: 18px; margin:0px 16px;" src="<?php echo base_url("/images/icons/lieu.png") ?>" alt="lieu"></div>
+				<div style="align-self:center">
+					<i class="bi bi-geo-alt-fill" style="height: 18px; margin:0px 12px;"></i>
+				</div>
 				<!-- Block !-->
 				<div>
 					<!-- Nom du lieu !-->
@@ -2078,8 +2085,6 @@
 			<div id="jamPlanningPanel" class="panel panel-default no-border" style="display:flex;">
 				<!-- Picto !-->
 				<div style="align-self:center">
-					<!-- <img style="height: 13px; margin:0px 16px;" src="<?php echo base_url("/images/icons/time.png") ?>" alt="time"> -->
-					<!-- <i class="bi bi-clock" style="height: 13px; margin:0px 12px;"></i> -->
 					<i class="bi bi-clock-fill" style="height: 13px; margin:0px 12px;"></i>
 				</div>
 				<!-- Block !-->
@@ -2101,7 +2106,9 @@
 			<?php if (isset($stage_item)) : ?>
 			<div id="stagePlanningPanel" class="panel panel-default no-border hidden" style="display:flex;">
 				<!-- Picto !-->
-				<div style="align-self:center"><img style="height: 13px; margin:0px 16px;" src="<?php echo base_url("/images/icons/time.png") ?>" alt="time"></div>
+				<div style="align-self:center">
+					<i class="bi bi-clock-fill" style="height: 13px; margin:0px 12px;"></i>
+				</div>
 				<!-- Block !-->
 				<div class="soften small" style="margin-top: 10px">
 					<p>

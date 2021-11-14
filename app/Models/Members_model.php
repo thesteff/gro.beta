@@ -41,6 +41,7 @@ class Members_model extends Model {
 		else if ($pseudo != "null") $builder->where('pseudo',urldecode($pseudo));
 		// Récupération de tous les membres
 		else if ($sort != "null") $builder->orderBy('pseudo', $sort);
+		
 		$query = $builder->get();
 		
 		if (!empty($query->getRow())) {
@@ -237,6 +238,29 @@ class Members_model extends Model {
 		$builder = $this->db->table('membres');	
 		$builder->where('email',$email);
 		return $builder->countAllResults(false) == 1;
+	}
+	
+	// Calcul la slug pour tous les membres
+	public function set_slug() {
+		
+		log_message("debug","********** Members_model :: set_slug");
+		
+		// On récupère les membres
+		$builder = $this->db->table('membres');	
+		$query = $builder->get();
+		$results = $query->getResult();
+
+		foreach ($results as $key => $member) {
+			
+			log_message("debug","actual slug : ".$member->slug);
+			log_message("debug","process slug : ".url_title($member->pseudo));
+
+			$data = array('slug' => url_title($member->pseudo) );
+			//$builder->update(intval($member->id), $data);
+			$this->update_member(intval($member->id), $data);
+			
+		}
+		
 	}
 	
 	

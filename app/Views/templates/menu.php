@@ -419,7 +419,7 @@
 					<!-- Dropdown Jam !-->
 					<li class="dropdown <?php if ($title == "Jam") echo "active" ?>">
 						<!-- si loggé, on liste les jam auxquelles le membre participe !-->
-						<?php if ($session->logged && sizeof($session->list_event) > 0 ) : ?>
+						<?php if ($session->logged && isset($session->list_event) && sizeof($session->list_event) > 0 ) : ?>
 							<a class="dropdown-toggle disabled" data-toggle="dropdown" href="<?php echo site_url('jam') ?>">Jam
 								<span class="caret"></span>
 							</a>

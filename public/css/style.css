@@ -320,21 +320,21 @@ hr.nomargin {
 @media (max-width: 1200px) {
 	#bootstrap-overrides {
 		background-size: 1200px 1800px;
-		/* font-size: 132%; */
+		//font-size: 132%;
 	}
 }
 
 @media (max-width: 992px) {
 	#bootstrap-overrides {
 		background-size: 972px 1458px;
-		/* font-size: 125%; */
+		//font-size: 125%;
 	}
 }
 
 @media (max-width: 768px) {
 	#bootstrap-overrides {
 		background-size: 748px 1122px;
-		/* font-size: 115%; */
+		//font-size: 115%;
 	}
 }
 
@@ -551,7 +551,7 @@ body.wait, body.wait *{
 }
 
 
-#bootstrap-overrides .bootstrap-select > .btn-default:not(.bs-placeholder),
+#bootstrap-overrides .bootstrap-select > .btn-default:not(.bs-placeholder)),
 #bootstrap-overrides .bootstrap-select > .btn-default:not(.bs-placeholder):hover {
 	color: #555 ;
 }
@@ -1085,43 +1085,6 @@ body.wait, body.wait *{
 }
 
 
-#bootstrap-overrides td {
-	vertical-align: middle;
-}
-
-
-/* icones bootstrap dans les tableaux */
-#bootstrap-overrides td .bi-check {
-	font-size: 20px;
-	color: limegreen;
-}
-
-#bootstrap-overrides td .bi-x {
-	font-size: 20px;
-	color: red;
-}
-
-#bootstrap-overrides td .bi-gender-male {
-	font-size: 14px;
-	color: dodgerblue;
-}
-
-#bootstrap-overrides td .bi-gender-female {
-	font-size: 14px;
-	color: deeppink;
-}
-
-#bootstrap-overrides td .bi-question {
-	font-size: 16px;
-}
-
-#bootstrap-overrides td.btnCell {
-	padding: 0px !important;
-}
-#bootstrap-overrides td.btnCell .btn {
-	padding: 10px 5px !important;
-}
-
 
 /*** custom css only popup ***/
 .columnSelectorWrapper {
@@ -1266,10 +1229,10 @@ body.wait, body.wait *{
 /* on désactive un effet de button de bootstrap */
 #bottom_bar .btn:active,
 #bottom_bar .btn.active {
-	background-image: none;
-	outline: 0;
-	-webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0);
-			box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0);
+  background-image: none;
+  outline: 0;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0);
+          box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0);
 }
 
 
@@ -1390,7 +1353,7 @@ tbody tr[versionId="-1"] > td {
 	font-family:rimouski;
 	width: 50px;
 	min-width: 50px;
-	/* flex: 0 0 5%; */
+	//flex: 0 0 5%;
 }
 
 
@@ -1399,7 +1362,7 @@ tbody tr[versionId="-1"] > td {
 	white-space: nowrap;
     overflow: hidden;
 	text-overflow: ellipsis;
-	/* width: 400px; /* Doit être lié avec le width de l'adresse box */
+	//width: 400px; /* Doit être lié avec le width de l'adresse box */
 }
 
 .list_item_title_box h4 {
@@ -1502,7 +1465,7 @@ tbody tr[versionId="-1"] > td {
 
 @media (min-width: 768px ) {
 	#profil-title.row {
-	position: relative;
+	  position: relative;
 	}
 
 	#profil-title .bottom-align-text {

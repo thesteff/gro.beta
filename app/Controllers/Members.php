@@ -20,7 +20,8 @@ class Members extends BaseController {
 		
 			// On récupère les infos du membre loggé dans la BD
 			$log = url_title($login);
-			$data['member_item'] = $members_model->get_member_by_slug($log);
+			//$data['member_item'] = $members_model->get_member_by_slug($log);
+			$data['member_item'] = $members_model->get_member_by_id($this->session->id);
 			$data['isSuperAdmin'] = $this->session->superAdmin;
 			
 			
@@ -276,21 +277,22 @@ class Members extends BaseController {
 		
 		// On reste sur la même page mais la session sera destroy
 		$uri = new \CodeIgniter\HTTP\URI(previous_url());
-		header('Location: '.base_url($uri->getPath()));
+		if (env('app.online')) header('Location: '.site_url($uri->getPath()));
+		else header('Location: '.base_url($uri->getPath()));
 		exit;
 	}
 	
 	
 	
 	//****************** VALIDATE ********************//
-	public function validateMail($memberSlug, $hash) {
+	public function validateMail($memberId, $hash) {
 
-		log_message('debug','******* Members : validate : '.$memberSlug.' / '.$hash);
+		log_message('debug','******* Members : validate : '.$memberId.' / '.$hash);
 		
 		$members_model = new Members_model();
 		
 		// On récupère le membre
-		$member = $members_model->get_members($memberSlug);
+		$member = $members_model->get_member_by_id($memberId);
 		
 		// Problème avec la slug
 		if (empty($member)) return;

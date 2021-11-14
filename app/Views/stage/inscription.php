@@ -1,10 +1,10 @@
 <!-- bootstrap datepicker !-->
-<script type="text/javascript" src="<?php echo base_url();?>ressources/bootstrap-datepicker-1.6.4/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>ressources/bootstrap-datepicker-1.6.4/locales/bootstrap-datepicker.fr.min.js"></script>
-<link rel="stylesheet" href="<?php echo base_url();?>ressources/bootstrap-datepicker-1.6.4/css/bootstrap-datepicker3.css" />
+<script type="text/javascript" src="<?php echo base_url("ressources/bootstrap-datepicker-1.6.4/js/bootstrap-datepicker.js"); ?>"></script>
+<script type="text/javascript" src="<?php echo base_url("ressources/bootstrap-datepicker-1.6.4/locales/bootstrap-datepicker.fr.min.js"); ?>"></script>
+<link rel="stylesheet" href="<?php echo base_url("ressources/bootstrap-datepicker-1.6.4/css/bootstrap-datepicker3.css"); ?>"/>
 
 <!-- autoresize texarea !-->
-<script type="text/javascript" src="<?php echo base_url();?>ressources/script/autosize.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>/ressources/script/autosize.js"></script>
 
 
 <!-- bootstrapValidator est chargé dans la view de la jam !-->
@@ -62,6 +62,9 @@
 				},
 				mobile: {
 					validators: {
+						notEmpty: {
+							message: 'Vous devez saisir un numéro de téléphone'
+						},
 						phone: {
 							country: 'FR',
 							message: 'Le numéro doit être valide'
@@ -71,6 +74,9 @@
 			 }
         })
 		.on('success.form.bv', function (e) {
+			
+			console.log("validator = success");
+			
 			//$('#success_message').slideDown({ opacity: "show" }, "slow") // Do something ...
 			$('#stage_inscription_form').data('bootstrapValidator').resetForm();
 
@@ -82,12 +88,11 @@
 			var bv = $form.data('bootstrapValidator');
 			
 			document.body.style.cursor = 'wait';
-			$.post("<?php echo site_url(); ?>/Ajax/create_stage_inscription",
+			$.post("<?php echo site_url('ajax/create_stage_inscription'); ?>",
 			
 				// On récupère les données nécessaires
 				{
 					'stage_id':'<?php echo $stage_item['id'] ?>',
-					'id':'<?php echo $this->session->userdata('id') ?>',
 					'email':$('#stage_inscription_form #email').val(),
 					'nom':$('#stage_inscription_form #nom').val(),
 					'prenom':$('#stage_inscription_form #prenom').val(),
@@ -98,7 +103,7 @@
 					'ecole':$('#stage_inscription_form #ecole').val(),
 					'prof':$('#stage_inscription_form #prof').val(),
 					'email_tuteur':$('#stage_inscription_form #email_tuteur').val(),
-					'tel_tuteur':$('#stage_inscription_form #tel_tuteur').val(),
+					'tel_tuteur':$('#stage_inscription_form #tel_tuteur').val().replace(/\s/g, ''),
 					'remarque':$('#stage_inscription_form #remarque').val()
 				},
 				
@@ -139,7 +144,7 @@
 		//$('#stage_inscription_form').bootstrapValidator('validate');
 
 		// On initialise le autoresize
-		$('.autosize').autosize({append: "\n"});
+		autosize($('#remarque'));
 		
 		
 		// On initialise le datepicker
@@ -150,12 +155,19 @@
 			todayHighlight: true,
 			startView: 2
 		}).on('changeDate', function(e) {
-				console.log($('#naissance').val());
 				check_majeur();
 		});
+
 		
 		// Actualise l'affichage du block tuteur en fonction de l'age indiqué
 		check_majeur();
+	
+		// On test tout de suite les champs pour forcer à remplir s'il manque des choses
+		$('#stage_inscription_form').bootstrapValidator('revalidateField', 'email');
+		$('#stage_inscription_form').bootstrapValidator('revalidateField', 'nom');
+		$('#stage_inscription_form').bootstrapValidator('revalidateField', 'prenom');
+		$('#stage_inscription_form').bootstrapValidator('revalidateField', 'mobile');
+		//$('#stage_inscription_form').bootstrapValidator('validate');
 	
 	});
 	
@@ -171,48 +183,61 @@
 		var age = Math.floor(diff/31536000000);
 		
 		// On affiche ou non le block tuteur et on actualise les propriété des inputs à valider
-		if (age < 18 && $("#tuteur_block").css("display") == "none") {
-			$("#tuteur_block #email_tuteur").removeClass("hidden");
-			$("#tuteur_block #email_tuteur").prop('required',true);
-			$("#tuteur_block #tel_tuteur").removeClass("hidden");
-			$("#tuteur_block #tel_tuteur").prop('required',true);
+		if (age < 18) {
+			
+			// On actualise les champs à valider
+			$('#stage_inscription_form').bootstrapValidator('addField', 'email_tuteur', {
+				validators: {
+						notEmpty: {
+							message: 'Vous devez saisir une adresse email'
+						},
+						emailAddress: {
+							message: 'L\'adresse email doit être valide'
+						}
+					}
+			});
+			$('#stage_inscription_form').bootstrapValidator('revalidateField', 'email_tuteur');
+			
+			
+			$('#stage_inscription_form').bootstrapValidator('addField', 'tel_tuteur', {
+				validators: {
+					notEmpty: {
+						message: 'Vous devez saisir un numéro de téléphone'
+					},
+					phone: {
+						country: 'FR',
+						message: 'Le numéro doit être valide'
+					}
+				}
+			});
+			$('#stage_inscription_form').bootstrapValidator('revalidateField', 'tel_tuteur');
+			
+			// On affiche la section
 			$("#tuteur_block").css("display","block");
+			
 		}
 		else if (age >= 18 && $("#tuteur_block").css("display") == "block") {
+			
+			// On actualise les champs à valider
+			$('#stage_inscription_form').bootstrapValidator('removeField', 'email_tuteur');
+			$('#stage_inscription_form').bootstrapValidator('removeField', 'tel_tuteur');
+			
+			// On masque la section
 			$("#tuteur_block").css("display","none");
-			$("#tuteur_block #email_tuteur").addClass("hidden");
-			$("#tuteur_block #email_tuteur").prop('required',false);
-			$("#tuteur_block #tel_tuteur").addClass("hidden");
-			$("#tuteur_block #tel_tuteur").prop('required',false);
 		}
 
-		
 		// On actualise le validator
 		$('#stage_inscription_form').bootstrapValidator('revalidateField', 'naissance');
 		
-		/*var $template = $('#email'),
-			$clone = $template.clone().removeAttr('id'),
-			$emailOptions = $clone.find('[name="email"]');*/
-			
-		/*var $template = $('#mobile'),
-			$clone = $template.clone().attr('id','tel_tuteur'),
-			$mobileOptions = $clone.find('[name="option[]"]');*/
-
-			
-		//$('#stage_inscription_form').bootstrapValidator('addField', $emailOptions);
-		//$('#stage_inscription_form').bootstrapValidator('addField', $mobileOptions);*/
-		//$('#stage_inscription_form').bootstrapValidator('validate');
 	}
 	
-	
-
 </script>
 
 
 
 <!-- Formulaire !-->
 <div id="stage_inscription_form" class="container-fluid">
-		
+
 	<!-- ****************** INFOS STAGE ***************** !-->
 	<div class="block-heading">
 		<h3>STAGE</h3>
@@ -250,13 +275,12 @@
 					<div style="align-self:center"><img style="height: 14px; margin:0px 16px;" src="/images/icons/cal.png" alt="lieu"></div>
 					<!-- Date !-->
 					<?php
-						$this->load->helper('my_text_helper');
 						$month1 = strftime("%b", strtotime($stage_item['date_debut']));
-						if (!$this->config->item('online')) $month1 = utf8_encode($month1);
+						if (!env('app.online')) $month1 = utf8_encode($month1);
 						$month1 =  substr(strtoupper(no_accent($month1)),0,3);
 						
 						$month2 = strftime("%b", strtotime($stage_item['date_fin']));
-						if (!$this->config->item('online')) $month2 = utf8_encode($month2);
+						if (!env('app.online')) $month2 = utf8_encode($month2);
 						$month2 =  substr(strtoupper(no_accent($month2)),0,3);
 					?>
 					<div class="date_box panel" style="align-self:center; margin: 20px 10px; padding: 5px">
@@ -289,8 +313,7 @@
 	<!-- TEXTE !-->
 	<div class="small">
 		<p>Le planning précis du stage sera transmis ultérieurement. Compter des journées de travail complètes (matin + soir).<p>
-		<p>Les repas seront pris en autonomie à la Source même.<p>
-		<p>Le stage est financé par la commune de Fontaine pour les élèves de la Source.<p>
+		<p>Les repas seront pris en autonomie sur les lieux du stage.<p>
 	</div>
 	
 	<hr class="dark">
@@ -303,7 +326,7 @@
 		
 		<!-- Pseudo !-->
 		<div class="col-sm-10 col-sm-offset-3" style="padding-top:0px; padding-bottom:10px">
-			<h3><strong><?php echo $members_item->pseudo; ?></strong></h3>
+			<h3><strong><?php echo $member->pseudo; ?></strong></h3>
 		</div>
 		
 		
@@ -315,7 +338,7 @@
 				<div class="form-group required">
 					<label for="email" class="control-label col-sm-3">Email</label>
 					<div class="col-sm-9">
-						<input id="email" class="form-control" required="true" type="email" name="email" value="<?php echo $members_item->email; ?>" data-error="Veuillez saisir une adresse email valide" required />
+						<input id="email" class="form-control" required="true" type="email" name="email" value="<?php echo $member->email; ?>" data-error="Veuillez saisir une adresse email valide" required />
 						<div class="help-block with-errors"></div>
 					</div>
 				</div>
@@ -324,7 +347,7 @@
 				<div class="form-group required">
 					<label for="nom" class="control-label col-sm-3">Nom</label>
 					<div class="col-sm-9">
-						<input id="nom" class="form-control" type="text" name="nom" value="<?php echo $members_item->nom ?>" />
+						<input id="nom" class="form-control" type="text" name="nom" value="<?php echo $member->nom ?>" />
 						<div class="help-block with-errors"></div>
 					</div>
 				</div>
@@ -333,24 +356,25 @@
 				<div class="form-group required">
 					<label for="prenom" class="control-label col-sm-3">Prénom</label>
 					<div class="col-sm-9">
-						<input id="prenom" class="form-control" type="text" name="prenom" value="<?php echo $members_item->prenom ?>" />
+						<input id="prenom" class="form-control" type="text" name="prenom" value="<?php echo $member->prenom ?>" />
 						<div class="help-block with-errors"></div>
 					</div>
 				</div>
 				
 				<!-- Date de naissance !-->
-					<div class="form-group required">
-						<label for="naissance" class="control-label col-sm-3">Date de naissance</label>
-						<div class="col-sm-9">
-							<input id="naissance" class="form-control" type="text" name="naissance" value="<?php echo empty($members_item->naissance) ? "" : $members_item->naissance ?>" />
-						</div>
+				<div class="form-group required">
+					<label for="naissance" class="control-label col-sm-3">Date de naissance</label>
+					<div class="col-sm-9">
+						<input id="naissance" class="form-control" type="text" name="naissance" value="<?php echo empty($member->naissance) ? "" : $member->naissance ?>" />
 					</div>
+				</div>
+		
 					
 				<!-- Mobile !-->
-				<div class="form-group">
+				<div class="form-group required">
 					<label for="mobile" class="control-label col-sm-3">Mobile</label>
 					<div class="col-sm-9">
-						<input id="mobile" class="form-control" type="text" name="mobile" value="<?php echo substr($members_item->mobile,0,2).' '.substr($members_item->mobile,2,2).' '.substr($members_item->mobile,4,2).' '.substr($members_item->mobile,6,2).' '.substr($members_item->mobile,8,2) ?>" />
+						<input id="mobile" class="form-control" type="text" name="mobile" value="<?php if (strlen($member->mobile) > 0) echo substr($member->mobile,0,2).' '.substr($member->mobile,2,2).' '.substr($member->mobile,4,2).' '.substr($member->mobile,6,2).' '.substr($member->mobile,8,2) ?>" />
 						<div class="help-block with-errors"></div>
 					</div>
 				</div>
@@ -364,7 +388,7 @@
 					<label class='control-label col-sm-3' style='white-space: nowrap'>Instrument 1</label>
 					<div class='btn-group col-sm-5'>
 						<div class='btn btn-static instruItem coloredItem'>
-							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $members_item->instrument1; ?>&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $member->instrument1; ?>&nbsp;&nbsp;&nbsp;&nbsp;
 						</div>
 					</div>
 				</div>
@@ -456,12 +480,10 @@
 				
 				<hr class="dark">
 				
-				<!--
-				<div class="small">
-					<p>Votre inscription au stage sera validée sur réception du chèque qui vous sera demandé lors de l'envoie du formulaire ci-contre.</p>
-				</div>!-->
 				
-				<div class="form-group">
+				<!-------- FOOTER --------->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
 					<input class="pull-right btn btn-primary" type="submit" name="submit" value="Envoyer" />
 				</div>
 				

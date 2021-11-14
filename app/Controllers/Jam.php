@@ -178,6 +178,8 @@ class Jam extends BaseController {
 			$members_model->get_instruments_info($data['member'], $data['jam_item']['formationId']);
 			//log_message('debug',"get_instruments_info : ".json_encode($data['member']));
 			
+			//log_message('debug',"member : ".json_encode($data['member']));
+			
 			// On détermine si l'utilisateur participe à la jam
 			$data['attend'] = $jam_model->is_included($data['jam_item']['id'], $member->id);
 			
@@ -522,7 +524,7 @@ class Jam extends BaseController {
 			if (isset ($data['stage_item']['id'])) {
 				//log_message("debug","stage_item : ".json_encode($data['stage_item']));
 				$data['list_stage_members'] = $stage_model->get_list_members($data['stage_item']['id']);
-				//log_message("debug","list_stage_members : ".json_encode($data['list_stage_members']));
+				log_message("debug","list_stage_members : ".json_encode($data['list_stage_members']));
 
 				// On reformate les dates d'inscriptions à la jam
 				if ($data['list_stage_members'] != false) {

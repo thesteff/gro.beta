@@ -84,11 +84,13 @@ class Stage_model extends Model {
 		return (!empty($query->getRow()));
 	}
 	
-	// Savoir si un stagiaire appartient à une jam
-	public function is_included($idJam, $idMembre) {
+	// Savoir si un membre participe au stage d'une jam
+	public function is_included($jamId, $memberId) {
+		
 		// On vérifie que la jam possède un stage
 		$builder = $this->db->table('stage');
-		$query = $builder->getWhere(['jamId' => $idJam]);
+		$query = $builder->getWhere(['jamId' => $jamId]);
+		
 		if (!empty($query->getRow())) {
 			// On récupère l'id du stage
 			$stageId = $query->getRow()->id;
@@ -96,7 +98,7 @@ class Stage_model extends Model {
 			//$this->db->select('*');
 			//$this->db->from('stage_membres_relation');
 			//$this->db->join('stage', 'stage.id = stage_membres_relation.stageId');
-			//$this->db->where('membresId', $idMembre);
+			//$this->db->where('membresId', $memberId);
 			//$this->db->where('stage.id', $stageId);
 			//$query2 = $this->db->get();
 			
@@ -106,7 +108,8 @@ class Stage_model extends Model {
 					FROM stage_membres_relation
 					INNER JOIN stage
 					ON stage.id = stage_membres_relation.stageId
-					WHERE stage.id = '.$stageId);
+					WHERE stage.id = '.$stageId.'
+					AND membresId = '.$memberId);
 			
 			if (!empty($query2->getRow())) {
 				return $query2->getResult();

@@ -583,7 +583,8 @@ class Ajax_members extends BaseController {
 
 			if (env('app.has_net')) {
 			
-				$link = site_url('members/validateMail/').$member->slug.'/'.$hash;
+				//$link = site_url('members/validateMail/').$member->slug.'/'.$hash;
+				$link = site_url('members/validateMail/').$member->id.'/'.$hash;
 			
 				// On envoie un email
 				$email = \Config\Services::email();
@@ -611,6 +612,21 @@ class Ajax_members extends BaseController {
 		$return_data = array(
 			'state' => $state,
 			'data' => $msg
+		);
+		$output = json_encode($return_data);
+		echo $output;
+	}
+	
+	
+	// Calcul la slug pour tous les membres
+	public function set_slug() {
+		
+		$members_model = new Members_model();
+		
+		$state = $members_model->set_slug();
+		$return_data = array(
+			'state' => $state,
+			'data' => ""
 		);
 		$output = json_encode($return_data);
 		echo $output;

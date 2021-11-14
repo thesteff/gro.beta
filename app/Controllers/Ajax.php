@@ -10,6 +10,7 @@ use App\Models\Instruments_model;
 use App\Models\Message_model;
 use App\Models\Discussion_model;
 use App\Models\Invitation_model;
+use App\Models\Stage_model;
 
 class Ajax extends BaseController {
 
@@ -387,11 +388,11 @@ class Ajax extends BaseController {
 	
 	public function create_stage_inscription() {
 		
-		//log_message('debug',"create_stage_inscription ************");
+		log_message('debug',"Ajax :: create_stage_inscription ************");
 		
 		// ******************  On update le member au cas où
+		$memberId = $this->session->id;
 		$stageId = trim($_POST['stage_id']);
-		$memberId = trim($_POST['id']);  // Seul le pseudo est fixe	
 		$email = trim($_POST['email']);
 		$nom = trim($_POST['nom']);
 		$prenom = trim($_POST['prenom']);
@@ -405,19 +406,31 @@ class Ajax extends BaseController {
 		$tel_tuteur = trim($_POST['tel_tuteur']);
 		$remarque = trim($_POST['remarque']);
 		
-
-		$tmpPseudo = $this->members_model->get_members_by_email($email);
-		$oldMember = $this->members_model->get_members_by_id($memberId);
 		
+		$member_model = new Members_model();
+		$stage_model = new Stage_model();
+		$jam_model = new Jam_model();
+		
+		
+		$member = $member_model->get_member_by_email($email);
+		$oldMember = $member_model->get_member_by_id($memberId);
+
+		/*log_message('debug',"memberId : ".$this->session->id);
+		log_message('debug',"oldMember : ".json_encode($oldMember));
+		log_message('debug',"email : ".$oldMember["email"]);*/
+
 		// On récupère le stage
-		$stage_item = $this->stage_model->get_stage($stageId);
+		$stage_item = $stage_model->get_stage($stageId);
 		
 		// On récupère la date de naissance
-		$tmp = explode("/", $naissance);
-		$naissance_iso = $tmp[2]."-".$tmp[1]."-".$tmp[0];
-	
+		if (!empty($naissance)) {
+			$tmp = explode("/", $naissance);
+			$naissance_iso = $tmp[2]."-".$tmp[1]."-".$tmp[0];
+		}
+		else $naissance_iso = NULL;
+
 		// On s'assure qu'un profil avec le même email n'existe pas déjà dans la base de donnée
-		if (!$tmpPseudo || $oldMember->email == $email) {
+		if (!$member || $oldMember->email == $email) {
 			// On update le membre dans la base avec le pass temporaire
 			$data = array(
 				'nom' => $nom,
@@ -426,24 +439,24 @@ class Ajax extends BaseController {
 				'email' => $email,
 				'mobile' => $mobile
 			);
-			$state = $this->members_model->update_members($memberId,$data);
+			$state = $member_model->update_member($memberId, $data);
 			$msg = $state ? "Le profil a bien été actualisé." : "Une erreur est survenue lors de l'actualisation du profil.";
 		}
 		else {
+			log_message('debug',"else");
 			$state = false;
 			$msg = "L'email <b>".$email."</b> est déjà utilisé par un autre utilisateur.";
 		}
-		
-		
+
 		// ******************  On créé l'inscription si tout s'est bien passé
 		if ($state) {
 			
 			// Inscription du membre à la jam (si la jam est pleine)
-			if (!$this->jam_model->is_included($stage_item->jamId, $memberId)) {
-				$this->jam_model->join_member($stage_item->jamId, $memberId);
+			if (!$jam_model->is_included($stage_item->jamId, $memberId)) {
+				$jam_model->join_member($stage_item->jamId, $memberId);
 			}
 			
-			
+
 			// Inscription du membre en tant que stagiaire			
 			$inscr = array(
 				'stageId' => $stageId,
@@ -462,14 +475,15 @@ class Ajax extends BaseController {
 				'date_relance' => date("Y-m-d G:i:s")
 			);
 
-			// On insère le membre dans la base
-			$this->stage_model->join_stage_member($inscr);
 			
+
+			// On insère le membre dans la base
+			$stage_model->join_stage_member($inscr);
+
 			$msg .= "<br>La pré-inscription a bien été enregistrée.<br>Votre inscription définitive au stage sera validée sur réception du chèque.";
 			
 			
 			// ************ On envoie un EMAIL
-			$this->load->library('email');
 			
 			$message = '<p>
 							Bonjour,<br><br>
@@ -483,15 +497,18 @@ class Ajax extends BaseController {
 			$emailArray[] = $email;
 			if (! empty($email_tuteur)) $emailArray[] = $email_tuteur;
 			
-			log_message('debug',json_encode($emailArray));
+			log_message('debug',"Ajax :: create_stage_inscription :: email->send() : ".json_encode($emailArray));
 					
-			if ($this->config->item('net')) {		
-				$this->email->from('manage@le-gro.com','GRO');
-				$this->email->reply_to('contact@le-gro.com');
-				$this->email->to($emailArray);
-				$this->email->subject("Grenoble Reggae Orchestra ~ Stage // Pré-inscription");
-				$this->email->message($message);
-				$this->email->send();
+			if (env('app.has_net')) {
+				
+				// On envoie un email
+				$email = \Config\Services::email();				
+				$email->setFrom('manage@le-gro.com','GRO');
+				$email->setReplyTo('contact@le-gro.com');
+				$email->setTo($emailArray);
+				$email->setSubject("Grenoble Reggae Orchestra ~ Stage // Pré-inscription");
+				$email->setMessage($message);
+				$email->send();
 			}
 			
 			else $msg .= "<br>Impossible d'envoyer d'email de confirmation sans connexion internet.";
@@ -519,13 +536,18 @@ class Ajax extends BaseController {
 		$state = trim($_POST['state']);
 		$send_email =  trim($_POST['send_email']);
 		
-		$this->stage_model->update_cheque_state($tmemberId, $state);
+		$lieux_model = new Lieux_model();
+		$stage_model = new Stage_model();
+		$jam_model = new Jam_model();
+		
+		
+		$stage_model->update_cheque_state($tmemberId, $state);
 		
 		//On récupère le membre
-		$member = $this->stage_model->get_member_by_stageMemberId($tmemberId);
+		$member = $stage_model->get_member_by_stageMemberId($tmemberId);
 		
 		//On récupère le stage
-		$stage = $this->stage_model->get_stage_stmbId($tmemberId);
+		$stage = $stage_model->get_stage_stmbId($tmemberId);
 		
 		// On reformate les dates récupérées du stage
 		$date = date_create_from_format("Y-m-d",$stage->date_debut);
@@ -533,14 +555,11 @@ class Ajax extends BaseController {
 		date_add($date,date_interval_create_from_date_string("2 days"));
 		$stage_date2 = date_format($date,"d/m/Y");
 
-		$jam = $this->jam_model->get_jam_id($stage->jamId);
-		$lieu = $this->lieux_model->get_lieux_by_id($stage->lieuxId);
+		$jam = $jam_model->get_jam_id($stage->jamId);
+		$lieu = $lieux_model->get_lieux_by_id($stage->lieuxId);
 		
 		if ($send_email == "true") {
-			
-			// On envoie un EMAIL
-			$this->load->library('email');
-			
+
 			$message = '<p>
 							Bonjour,<br><br>
 							Nous avons bien reçu le chéque concernant le réglement du stage organisé par le Grenoble Reggae Orchestra.<br>
@@ -549,14 +568,17 @@ class Ajax extends BaseController {
 							
 						</p>
 						<p>A bientôt !<br><i class="note">L\'équipe du Grenoble Reggae Orchestra</i></p>';
-		
-			if ($this->config->item('net')) {		
-				$this->email->from('manage@le-gro.com','GRO');
-				$this->email->reply_to('contact@le-gro.com');
-				$this->email->to( array ($member->email_tuteur, $member->email) );
-				$this->email->subject("Grenoble Reggae Orchestra ~ Stage // Réception chèque");
-				$this->email->message($message);
-				$this->email->send();
+
+			
+			if (env('app.has_net')) {
+				// On envoie un email
+				$email = \Config\Services::email();				
+				$email->setFrom('manage@le-gro.com','GRO');
+				$email->setReplyTo('contact@le-gro.com');
+				$email->setTo(array ($member->email_tuteur, $member->email));
+				$email->setSubject("Grenoble Reggae Orchestra ~ Stage // Réception chèque");
+				$email->setMessage($message);
+				$email->send();
 				$msg = "Modification de l'état de réception du chèque validée et mail envoyé !";
 			}
 			
